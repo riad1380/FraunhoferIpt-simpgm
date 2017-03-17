@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+.overlay {
+	fill: none;
+	pointer-events: all;
+}
+.focus circle {
+	fill : none;
+	stroke : steelblue;
+}

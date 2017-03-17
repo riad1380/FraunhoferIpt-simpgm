@@ -1,0 +1,81 @@
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Comaptiable" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale =1">
+	<title>simpgmWebVersion</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/learnBootstrap1videoSpecific.css" rel="stylesheet">
+    <link href="css/simpgm.css" rel="stylesheet">     
+	<script src="js/jquery.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script type= "text/javascript" src="js/angular.min.js"></script>
+	<script type= "text/javascript" src="js/d3.min.js"></script>
+</head>
+
+<body ng-app="myApp" ng-init="chart=[200, 300, 160, 40, 60, 130]">
+	
+ 	<div class="container">
+ 	
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="firstPolygonInputX" class="col-sm-2 control-label">a</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="firstPolygonInputX" name="firstPolygonInputX" placeholder="polygonXInput" ng-model=chart[0] value="">
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="firstPolygonInputY" class="col-sm-2 control-label">b</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="firstPolygonInputY" name="firstPolygonInputY" placeholder="polygonYInput" ng-model=chart[1] value="">
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="secondPolygonInputX" class="col-sm-2 control-label">c</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="secondPolygonInputX" name="secondPolygonInputX" placeholder="polygonXInput" ng-model=chart[2] value="">
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="secondPolygonInputY" class="col-sm-2 control-label">d</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="secondPolygonInputY" name="secondPolygonInputY" placeholder="polygonYInput" ng-model=chart[3] value="">
+				</div>
+			</div> 
+			
+			<div class="form-group">
+				<label for="thirdPolygonInputX" class="col-sm-2 control-label">e</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="thirdPolygonInputX" name="thirdPolygonInputX" placeholder="polygonXInput" ng-model=chart[4] value="">
+				</div>
+			</div> 
+			
+			<div class="form-group">
+				<label for="thirdPolygonInputY" class="col-sm-2 control-label">f</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="thirdPolygonInputY" name="thirdPolygonInputY" placeholder="polygonYInput" ng-model=chart[5] value="">
+				</div>
+			</div>
+			
+			
+			
+		
+		</form>
+			
+			
+		<p id="onlyValue">
+			<donut-chart data="chart"></donut-chart>
+		</p> 
+	</div> 
+	
+
+
+
+	<script type="text/javascript" src="js/UpperMoldDesign.js"></script> 
+<!-- 	<script type="text/javascript" src="js/angularTestingFile.js"></script> -->
+
+</body>
+</html>
