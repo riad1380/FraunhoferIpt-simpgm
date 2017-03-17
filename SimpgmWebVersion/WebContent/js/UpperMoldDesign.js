@@ -3,8 +3,9 @@
 // *******************************************************************
 var poly1, poly2, poly3, poly4, a, b, c, d, e, f;
 var objectArray = [];
-var width = height = 1000;
-var xVal50PointsArray = yVal50PointsArray = [];
+var circleArray = [];
+var xVal50PointsArray = [];
+var yVal50PointsArray = []
 // ** Parameters for Upper Mold Surface Design ***
 var D_surf_upp_Mold		=	10.74;
 var N_surf_upp_Mold		=	50 ;
@@ -37,8 +38,8 @@ var H_upp_Mold		=	15	*1e-3;   //#c
 
 
 //*** variable declaration of coordinates of the last point among 50
-var x_RF_surf_upp_Mold = y_RF_surf_upp_Mold =0;
-
+var x_RF_surf_upp_Mold = 0;
+var y_RF_surf_upp_Mold = 0;
 var myApp = angular.module('myApp', []);
 
 //*******************************************************************
@@ -52,15 +53,8 @@ function generatingYPoint (x,R,K,A2,A4, A6, A8, A10, A12, A14, A16, A18, A20) {
  }
 
 //*******************************************************************
-//****************** General Functions ******************************
-//*******************************************************************
-var bisect = d3.bisector(function (d) {
-				return d;
-			}).left;
-//*******************************************************************
 //****************** Generating Coordinates ***************************
 //*******************************************************************
-//loop e jamela kore rakhso
 //draw gang copy niye gesila bag e
 var generatingCoordinates= function(){
 	for(i =0;i< N_surf_upp_Mold; i++){
@@ -70,14 +64,17 @@ var generatingCoordinates= function(){
                 						  A8_surf_upp_Mold,A10_surf_upp_Mold,A12_surf_upp_Mold,
                 						  A14_surf_upp_Mold,A16_surf_upp_Mold,A18_surf_upp_Mold,
                 						  A20_surf_upp_Mold);
+
 	    if(i == (N_surf_upp_Mold-1)){
 	    	x_RF_surf_upp_Mold = x_surf_1_upp_Mold*1e-3;
 	    	y_Rf_surf_upp_Mold = y_surf_1_upp_Mold*1e-3;
 	    	xVal50PointsArray.push(x_RF_surf_upp_Mold);
 	    	yVal50PointsArray.push(y_RF_surf_upp_Mold);
-	    	//objectArray.push({"x": x_RF_surf_upp_Mold, "y": y_RF_surf_upp_Mold});
 	    }else{
 	    	var object1 = {"x": x_surf_1_upp_Mold*1e-3, "y": y_surf_1_upp_Mold*1e-3};
+	    	if(i == 0 || i == (N_surf_upp_Mold-2)){
+	    		circleArray.push(object1);
+	    	}
 	  	    console.log(i + " " + x_surf_1_upp_Mold + " " + y_surf_1_upp_Mold);
 	  	    xVal50PointsArray.push(x_surf_1_upp_Mold*1e-3);
 	  	    yVal50PointsArray.push(y_surf_1_upp_Mold*1e-3);
@@ -99,7 +96,14 @@ objectArray.push({"x":D_1_upp_Insert/2, "y": y_RF_surf_upp_Mold-RF_surf_upp_Mold
 objectArray.push({"x":D_upp_Mold/2, "y": y_RF_surf_upp_Mold-RF_surf_upp_Mold-(H_upp_Mold-H_upp_Insert)});
 objectArray.push({"x":D_1_upp_Insert/2, "y": (y_RF_surf_upp_Mold-RF_surf_upp_Mold+H_upp_Insert)});
 objectArray.push({"x":D_1_upp_Insert/2, "y": (y_RF_surf_upp_Mold-RF_surf_upp_Mold+H_upp_Insert)});
-//no need because polygon --objectArray.push({"x":0, "y": 0});
+
+circleArray.push({"x":x_RF_surf_upp_Mold, "y": (y_RF_surf_upp_Mold-RF_surf_upp_Mold)});
+circleArray.push({"x":D_1_upp_Insert/2, "y": (y_RF_surf_upp_Mold-RF_surf_upp_Mold)});
+circleArray.push({"x":D_1_upp_Insert/2, "y": y_RF_surf_upp_Mold-RF_surf_upp_Mold-(H_upp_Mold-H_upp_Insert)});
+circleArray.push({"x":D_upp_Mold/2, "y": y_RF_surf_upp_Mold-RF_surf_upp_Mold-(H_upp_Mold-H_upp_Insert)});
+circleArray.push({"x":D_1_upp_Insert/2, "y": (y_RF_surf_upp_Mold-RF_surf_upp_Mold+H_upp_Insert)});
+circleArray.push({"x":D_1_upp_Insert/2, "y": (y_RF_surf_upp_Mold-RF_surf_upp_Mold+H_upp_Insert)});
+
 //*******************************************************************
 //****************** printing/ debugging ****************************
 //*******************************************************************
@@ -107,14 +111,11 @@ console.log(Math.min.apply(null,xVal50PointsArray));
 console.log(Math.max.apply(null,xVal50PointsArray));
 console.log(Math.min.apply(null,yVal50PointsArray));
 console.log(Math.max.apply(null,yVal50PointsArray));
+console.log(circleArray);
 console.log("x_RF_surf_upp_Mold " + x_RF_surf_upp_Mold);
 console.log("D_1_upp_Insert/2 " + D_1_upp_Insert/2);
 console.log("D_upp_Mold/2 " + D_upp_Mold/2);
 console.log("y_RF_surf_upp_Mold-RF_surf_upp_Mold " + (y_RF_surf_upp_Mold-RF_surf_upp_Mold));
-
-
-
-
 
 //*******************************************************************
 //****************** scaling functions ******************************
@@ -137,49 +138,19 @@ var mirrorScaleX = d3.scale.linear()
 myApp.directive('donutChart',function(){
 	function link(scope,el,attr){
 		  
+		  var div = d3.select("body").append("div")	
+		    .attr("class", "tooltip")				
+		    .style("opacity", 0);
+ 
 		  var svgContainer = d3.select(el[0]).append("svg")
-		    .attr("width", 1200)
-		    .attr("height",1000);
-		  
-
-		  
-		  function showValueOnMouseMove (){
-			  var focus = svgContainer.append("g")
-				.attr("class", "focus")
-				.style("display", "none");
-
-			  focus.append("circle")
-			  	.attr("r", 4.5);
-
-			  focus.append("text")
-			  	.attr("x", 9)
-			  	.attr("dy", ".35em");
-			  
-			  svgContainer.append("rect")
-			  				.attr("class", "overlay")
-			  				.attr("width", width)
-			  				.attr("height",height)
-			  				.on("mouseover", function() { focus.style("display", null); })
-			  				.on("mouseout", function() { focus.style("display", "none"); })
-			  				.on("mousemove", mousemove);
-			  
-			  function mousemove(){
-				  var selectedXValue = d3.mouse(this) [0];
-				  var selectedYValue = d3.mouse(this) [1];
-				  if (scaleX.invert(d3.mouse(this) [0]) == x_RF_surf_upp_Mold){
-					  console.log("inside");
-					  focus.attr("transform", "translate(" + selectedXValue + "," + selectedYValue + ")");
-					  focus.select("text").text("( " + scaleX.invert(d3.mouse(this) [0]) + ", " +scaleY.invert(d3.mouse(this) [1]) + " )"); 
-				  } 
-			  }
-		  }
-		  
+		    .attr("width", 1050)
+		    .attr("height",1070);
+		  //************ polygon draw ***************************
 		  function drawPoly (poly1,poly2,poly3){
 			 
 			 
 			 d3.selectAll("g").remove();
 			 var drawPolygon1 = svgContainer.append("g")
-		        //.attr("transform","scale(-1/2,1)")
 		        .selectAll("polygon")
 		        .data([objectArray])
 		        .enter().append("polygon")
@@ -189,73 +160,31 @@ myApp.directive('donutChart',function(){
 		        .attr("fill","LightGray")
 		        .attr("fill-opacity",0)
 		        .attr("stroke-width",2);
-		        
-			 
-			 /*var testingMirrorDrawPolygon1 = svgContainer.append("g")
-		        //.attr("transform","scale(-1/2,1)")
-		        .selectAll("polygon")
-		        .data([objectArray])
-		        .enter().append("polygon")
-		        .attr("points",function(d) {
-		        	return d.map(function(d) { return [mirrorScaleX(d.x),scaleY(d.y)].join(","); }).join(" ");})
-		        .attr("stroke","black")
-		        .attr("fill","LightGray")
-		        .attr("fill-opacity",.0)
-		        .attr("stroke-width",2); 
-			 var mirrorDrawPolygon1 = svgContainer.append("g")
-		        .attr("transform","translate(220,0) scale(-1,1)")
-		        .selectAll("polygon")
-		        .data([poly1])
-		        .enter().append("polygon")
-		        .attr("points",function(d) {
-		        	return d.map(function(d) { return [d.x,d.y].join(","); }).join(" ");})
-		        .attr("stroke","black")
-		        .attr("fill","LightGray")
-		        .attr("stroke-width",2);
-			 
-			 var drawPolygon2 = svgContainer.append("g")
-		        .attr("transform","translate(200,0)")
-		        .selectAll("polygon")
-		        .data([poly2])
-		        .enter().append("polygon")
-		        .attr("points",function(d) {
-		        	return d.map(function(d) { return [d.x,d.y].join(","); }).join(" ");})
-		        .attr("stroke","black")
-		        .attr("fill","Plum")
-		        .attr("stroke-width",2);
-		    
-			 var mirrorDrawPolygon2 = svgContainer.append("g")
-		        .attr("transform","translate(220,0) scale(-1,1)")
-		        .selectAll("polygon")
-		        .data([poly2])
-		        .enter().append("polygon")
-		        .attr("points",function(d) {
-		        	return d.map(function(d) { return [d.x,d.y].join(","); }).join(" ");})
-		        .attr("stroke","black")
-		        .attr("fill","Plum")
-		        .attr("stroke-width",2);
-
-			 var drawPolygon3 = svgContainer.append("g")
-		        .attr("transform","translate(200,0)")
-		        .selectAll("polyline")
-		        .data([poly3])
-		        .enter().append("polyline")
-		        .attr("points",function(d) {
-		        	return d.map(function(d) { return [d.x,d.y].join(","); }).join(" ");})
-		        .attr("stroke","black")
-		        .attr("fill","PaleGreen")
-		        .attr("stroke-width",2);
-		    
-			 var mirrorDrawPolygon3 = svgContainer.append("g")
-		        .attr("transform","translate(220,0) scale(-1,1)")
-		        .selectAll("polyline")
-		        .data([poly3])
-		        .enter().append("polyline")
-		        .attr("points",function(d) {
-		        	return d.map(function(d) { return [d.x,d.y].join(","); }).join(" ");})
-		        .attr("stroke","black")
-		        .attr("fill","PaleGreen")
-		        .attr("stroke-width",2);*/
+		  }
+		  
+		  //************ circle draw ********************************
+		  function drawCircle (){
+			  svgContainer.append("g")
+			  	.selectAll("dot")
+			  	.data(circleArray)
+			  	.enter().append("circle")
+			  		.attr("r", 5)
+			  		.attr("cx", function (d) {return scaleX(d.x); })
+			  		.attr("cy", function (d) {return scaleY(d.y); })
+			  		.attr("fill", "blue")
+			  		.on("mouseover", function(d) {		
+			            div.transition()		
+			                .duration(200)		
+			                .style("opacity", .9);		
+			            div	.html(d.x + "<br/>"  + d.y)	
+			                .style("left", (d3.event.pageX) + "px")		
+			                .style("top", (d3.event.pageY - 28) + "px");	
+			            })					
+			        .on("mouseout", function(d) {		
+			            div.transition()		
+			                .duration(500)		
+			                .style("opacity", 0);	
+			        });
 		  }
 //*******************************************************************
 //****************** dynamic updates values *************************
@@ -274,7 +203,6 @@ myApp.directive('donutChart',function(){
 				       {"x":((a/2)-(d/2)), "y":c},
 				       {"x":((a/2)-(d/2)), "y":(e+d)},
 				       {"x":(a/2), "y":(e+d)}];
-			  //console.log(poly1);
 			  
 			  poly2 = [{"x":(a/2), "y":e},
 			           {"x":((a/2)-d), "y":e},
@@ -292,7 +220,7 @@ myApp.directive('donutChart',function(){
 			           {"x":10, "y":f}];
 			  
 			  drawPoly(poly1,poly2,poly3);	
-			  showValueOnMouseMove();
+			  drawCircle();
 		  },true);
 		  
 	}
